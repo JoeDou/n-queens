@@ -165,8 +165,8 @@ window.countNQueensSolutions = function(n) {
         board.togglePiece(row, col);
 
         // only if row < n
-        if (!board.hasAnyMinorDiagonalConflicts() &&
-            !board.hasAnyMajorDiagonalConflicts()){
+        if (!board.hasMajorDiagonalConflictAt(board._getFirstRowColumnIndexForMajorDiagonalOn(row, col)) &&
+            !board.hasMinorDiagonalConflictAt(board._getFirstRowColumnIndexForMinorDiagonalOn(row, col))){
           row++;
           if (row < n){
             recurse(board, row);
