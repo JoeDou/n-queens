@@ -40,23 +40,21 @@ window.findNRooksSolution = function(n) {
         board.togglePiece(row, col);
 
         // only if row < n
-        if (!board.hasAnyRooksConflicts()){
-          row++;
-          if (row < n){
-            recurse(board, row);
-            row --;
-          }else{
-            if (solution.length < 1){
-              var arr = [];
-              for (var j =0; j < n; j++){
-                arr.push(board.get(j).slice(0));
-              }
-              var newBoard = new Board(arr);
-              solution.push(newBoard);
+        row++;
+        if (row < n){
+          recurse(board, row);
+          row --;
+        }else{
+          if (solution.length < 1){
+            var arr = [];
+            for (var j =0; j < n; j++){
+              arr.push(board.get(j).slice(0));
             }
-            return;
-            //row--;
+            var newBoard = new Board(arr);
+            solution.push(newBoard);
           }
+          return;
+          //row--;
         }
         board.togglePiece(row,col);
       }
@@ -81,16 +79,13 @@ window.countNRooksSolutions = function(n) {
       if (colArr.indexOf(col) === -1){
         board.togglePiece(row, col);
 
-        // only if row < n
-        if (!board.hasAnyRooksConflicts()){
-          row++;
-          if (row < n){
-            recurse(board, row);
-            row --;
-          }else{
-            count++;
-            row--;
-          }
+        row++;
+        if (row < n){
+          recurse(board, row);
+          row --;
+        }else{
+          count++;
+          row--;
         }
         board.togglePiece(row,col);
       }
@@ -111,29 +106,38 @@ window.findNQueensSolution = function(n) {
   var recurse = function(board, row) {
     board = board || new Board({'n':n});
     row = row || 0;
+    var colArr = columnCount(board, n);
+
 
     for(var col=0; col<n; col++) {
-      board.togglePiece(row, col);
-
-      // only if row < n
-      if (!board.hasAnyQueensConflicts()){
-        row++;
-        if (row < n){
-          recurse(board, row);
-          row --;
-        }else{
-          if (solution.length < 1){
-            var arr = [];
-            for (var j =0; j < n; j++){
-              arr.push(board.get(j).slice(0));
-            }
-            var newBoard = new Board(arr);
-            solution.push(newBoard);
-          }
-          row--;
-        }
+      if(solution.length >0){
+        return;
       }
-      board.togglePiece(row,col);
+      if (colArr.indexOf(col) === -1){
+        board.togglePiece(row, col);
+
+        if (!board.hasAnyMinorDiagonalConflicts() &&
+            !board.hasAnyMajorDiagonalConflicts()){
+          row++;
+          if (row < n){
+            recurse(board, row);
+            row --;
+          }else{
+            if (solution.length < 1){
+              var arr = [];
+              for (var j =0; j < n; j++){
+                arr.push(board.get(j).slice(0));
+              }
+              var newBoard = new Board(arr);
+              solution.push(newBoard);
+              return;
+            }
+            row--;
+          }
+        }
+        board.togglePiece(row,col);
+      }
+
     }
   };
 
@@ -153,22 +157,27 @@ window.countNQueensSolutions = function(n) {
   var recurse = function(board, row) {
     board = board || new Board({'n':n});
     row = row || 0;
+    var colArr = columnCount(board, n);
+
 
     for(var col=0; col<n; col++) {
-      board.togglePiece(row, col);
+      if (colArr.indexOf(col) === -1){
+        board.togglePiece(row, col);
 
-      // only if row < n
-      if (!board.hasAnyQueensConflicts()){
-        row++;
-        if (row < n){
-          recurse(board, row);
-          row--;
-        }else{
-          count++
-          row--;
+        // only if row < n
+        if (!board.hasAnyMinorDiagonalConflicts() &&
+            !board.hasAnyMajorDiagonalConflicts()){
+          row++;
+          if (row < n){
+            recurse(board, row);
+            row--;
+          }else{
+            count++;
+            row--;
+          }
         }
+        board.togglePiece(row,col);
       }
-      board.togglePiece(row,col);
     }
   };
 
